@@ -18,7 +18,7 @@ class DailyMotionXBlock(XBlock):
 
     # TO-DO: delete count, and define your own fields.
     display_name = String(display_name="Display Name",
-        default="PDF",
+        default="DailyMotion",
         scope=Scope.settings,
         help="This name appears in the horizontal navigation at the top of the page.")
 
