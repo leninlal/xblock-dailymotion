@@ -1,0 +1,9 @@
+/* CSS for DailyMotionXBlock */
+
+.dailymotion_block .count {
+    font-weight: bold;
+}
+
+.dailymotion_block p {
+    cursor: pointer;
+}
