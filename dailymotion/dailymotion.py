@@ -56,7 +56,7 @@ class DailyMotionXBlock(XBlock):
         
         frag = Fragment(html)
         frag.add_css(self.load_resource("static/css/dailymotion.css"))
-        frag.add_javascript(self.load_resource("static/js/dm_view.js"))
+        frag.add_javascript(self.load_resource("static/js/src/dm_view.js"))
         frag.initialize_js('DailyMotionXBlockInitView')
         return frag
 
