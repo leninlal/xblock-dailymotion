@@ -23,9 +23,9 @@ class DailyMotionXBlock(XBlock):
         help="This name appears in the horizontal navigation at the top of the page.")
 
     url = String(display_name="PDF URL",
-        default="https://www.dailymotion.com/embed/video/x2men6q",
+        default="http://www.dailymotion.com/video/x2y4esu_30-python-programming-continue-statement_school",
         scope=Scope.content,
-        help="The URL for your PDF.")
+        help="The URL for your dailymotion video")
 
     def load_resource(self, resource_path):
         """
@@ -48,9 +48,11 @@ class DailyMotionXBlock(XBlock):
         The primary view of the DailyMotionXBlock, shown to students
         when viewing courses.
         """
+        video_id = self.url.split('https://www.dailymotion.com/video/')[1].split('_')[0]
+        url = 'https://www.dailymotion.com/embed/video/'+video_id 
         context = {
             'display_name': self.display_name,
-            'url': self.url,
+            'url': url,
         }
         html = self.render_template('static/html/dm_view.html', context)
         
@@ -65,6 +67,8 @@ class DailyMotionXBlock(XBlock):
         The secondary view of the XBlock, shown to teachers
         when editing the XBlock.
         """
+        video_id = self.url.split('https://www.dailymotion.com/video/')[1].split('_')[0]
+        url = 'https://www.dailymotion.com/embed/video/'+video_id 
         context = {
             'display_name': self.display_name,
             'url': self.url
@@ -81,7 +85,9 @@ class DailyMotionXBlock(XBlock):
         The saving handler.
         """
         self.display_name = data['display_name']
-        self.url = data['url']
+        video_id = data['url'].split('https://www.dailymotion.com/video/')[1].split('_')[0]
+        url = 'https://www.dailymotion.com/embed/video/'+video_id 
+        self.url = url
         
         return {
             'result': 'success',
