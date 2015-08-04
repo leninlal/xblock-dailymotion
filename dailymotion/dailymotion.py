@@ -60,33 +60,6 @@ class DailyMotionXBlock(XBlock):
         frag.initialize_js('DailyMotionXBlockInitView')
         return frag
 
-    # TO-DO: change this handler to perform your own actions.  You may need more
-    # than one handler, or you may not need any handlers at all.
-    # @XBlock.json_handler
-    # def increment_count(self, data, suffix=''):
-    #     """
-    #     An example handler, which increments the data.
-    #     """
-    #     # Just to show data coming in...
-    #     assert data['hello'] == 'world'
-
-    #     self.count += 1
-    #     return {"count": self.count}
-
-    # # TO-DO: change this to create the scenarios you'd like to see in the
-    # # workbench while developing your XBlock.
-    # @staticmethod
-    # def workbench_scenarios():
-    #     """A canned scenario for display in the workbench."""
-    #     return [
-    #         ("DailyMotionXBlock",
-    #          """<vertical_demo>
-    #             <dailymotion/>
-    #             <dailymotion/>
-    #             <dailymotion/>
-    #             </vertical_demo>
-    #          """),
-    #     ]
     def studio_view(self, context=None):
         """
         The secondary view of the XBlock, shown to teachers
@@ -97,9 +70,8 @@ class DailyMotionXBlock(XBlock):
             'url': self.url
         }
         html = self.render_template('static/html/dm_edit.html', context)
-        
         frag = Fragment(html)
-        frag.add_javascript(self.load_resource("static/js/dm_edit.js"))
+        frag.add_javascript(self.load_resource("static/js/src/dm_edit.js"))
         frag.initialize_js('DailyMotionXBlockInitEdit')
         return frag
 
