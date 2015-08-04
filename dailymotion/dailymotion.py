@@ -3,7 +3,7 @@
 import pkg_resources
 
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer
+from xblock.fields import Scope, Integer, String
 from xblock.fragment import Fragment
 
 
@@ -16,7 +16,7 @@ class DailyMotionXBlock(XBlock):
     # self.<fieldname>.
 
     # TO-DO: delete count, and define your own fields.
-     display_name = String(display_name="Display Name",
+    display_name = String(display_name="Display Name",
         default="PDF",
         scope=Scope.settings,
         help="This name appears in the horizontal navigation at the top of the page.")
@@ -26,10 +26,20 @@ class DailyMotionXBlock(XBlock):
         scope=Scope.content,
         help="The URL for your PDF.")
 
-    def resource_string(self, path):
-        """Handy helper for getting resources from our kit."""
-        data = pkg_resources.resource_string(__name__, path)
-        return data.decode("utf8")
+    def load_resource(self, resource_path):
+        """
+        Gets the content of a resource
+        """
+        resource_content = pkg_resources.resource_string(__name__, resource_path)
+        return unicode(resource_content)
+
+    def render_template(self, template_path, context={}):
+        """
+        Evaluate a template by resource path, applying the provided context
+        """
+        template_str = self.load_resource(template_path)
+        return Template(template_str).render(Context(context))
+
 
     # TO-DO: change this view to display your data your own way.
     def student_view(self, context=None):
@@ -37,10 +47,15 @@ class DailyMotionXBlock(XBlock):
         The primary view of the DailyMotionXBlock, shown to students
         when viewing courses.
         """
-        html = self.resource_string("static/html/dm_view.html")
-        frag = Fragment(html.format(self=self))
-        # frag.add_css(self.resource_string("static/css/dailymotion.css"))
-        frag.add_javascript(self.resource_string("static/js/src/dm_view.js"))
+        context = {
+            'display_name': self.display_name,
+            'url': self.url,
+        }
+        html = self.render_template('static/html/dm_view.html', context)
+        
+        frag = Fragment(html)
+        frag.add_css(self.load_resource("static/css/dailymotion.css"))
+        frag.add_javascript(self.load_resource("static/js/dm_view.js"))
         frag.initialize_js('DailyMotionXBlockInitView')
         return frag
 
@@ -72,20 +87,20 @@ class DailyMotionXBlock(XBlock):
     #          """),
     #     ]
     def studio_view(self, context=None):
-    """
-    The secondary view of the XBlock, shown to teachers
-    when editing the XBlock.
-    """
-    context = {
-        'display_name': self.display_name,
-        'url': self.url
-    }
-    html = self.render_template('static/html/dm_edit.html', context)
-    
-    frag = Fragment(html)
-    frag.add_javascript(self.load_resource("static/js/dm_edit.js"))
-    frag.initialize_js('DailyMotionXBlockInitEdit')
-    return frag
+        """
+        The secondary view of the XBlock, shown to teachers
+        when editing the XBlock.
+        """
+        context = {
+            'display_name': self.display_name,
+            'url': self.url
+        }
+        html = self.render_template('static/html/dm_edit.html', context)
+        
+        frag = Fragment(html)
+        frag.add_javascript(self.load_resource("static/js/dm_edit.js"))
+        frag.initialize_js('DailyMotionXBlockInitEdit')
+        return frag
 
     @XBlock.json_handler
     def save_dm(self, data, suffix=''):
