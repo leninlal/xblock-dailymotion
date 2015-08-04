@@ -22,10 +22,15 @@ class DailyMotionXBlock(XBlock):
         scope=Scope.settings,
         help="This name appears in the horizontal navigation at the top of the page.")
 
-    url = String(display_name="PDF URL",
+    url = String(display_name="URL",
         default="https://www.dailymotion.com/video/x2y4esu_30-python-programming-continue-statement_school",
         scope=Scope.content,
         help="The URL for your dailymotion video")
+
+    embed_url = String(display_name="URL",
+        default="https://www.dailymotion.com/embed/video/x2y4esu",
+        scope=Scope.content,
+        help="The Embed URL for your dailymotion video")
 
     def load_resource(self, resource_path):
         """
@@ -48,15 +53,16 @@ class DailyMotionXBlock(XBlock):
         The primary view of the DailyMotionXBlock, shown to students
         when viewing courses.
         """
-        try:
-            video_id = self.url.split('https://www.dailymotion.com/video/')[1].split('_')[0]
-            url = 'https://www.dailymotion.com/embed/video/'+video_id
-        except:
-            video_id = self.url.split('http://www.dailymotion.com/video/')[1].split('_')[0]
-            url = 'https://www.dailymotion.com/embed/video/'+video_id
+        # try:
+        #     video_id = self.url.split('https://www.dailymotion.com/video/')[1].split('_')[0]
+        #     embed_url = 'https://www.dailymotion.com/embed/video/'+video_id
+        # except:
+        #     video_id = self.url.split('http://www.dailymotion.com/video/')[1].split('_')[0]
+        #     embed_url = 'https://www.dailymotion.com/embed/video/'+video_id
         context = {
             'display_name': self.display_name,
-            'url': url,
+            'url': self.url,
+            'embed_url': self.embed_url
         }
         html = self.render_template('static/html/dm_view.html', context)
         
@@ -71,15 +77,16 @@ class DailyMotionXBlock(XBlock):
         The secondary view of the XBlock, shown to teachers
         when editing the XBlock.
         """
-        try:   
-            video_id = self.url.split('https://www.dailymotion.com/video/')[1].split('_')[0]
-            url = 'https://www.dailymotion.com/embed/video/'+video_id 
-        except:
-            video_id = self.url.split('http://www.dailymotion.com/video/')[1].split('_')[0]
-            url = 'https://www.dailymotion.com/embed/video/'+video_id 
+        # try:   
+        #     video_id = self.url.split('https://www.dailymotion.com/video/')[1].split('_')[0]
+        #     embed_url = 'https://www.dailymotion.com/embed/video/'+video_id 
+        # except:
+        #     video_id = self.url.split('http://www.dailymotion.com/video/')[1].split('_')[0]
+        #     embed_url = 'https://www.dailymotion.com/embed/video/'+video_id 
         context = {
             'display_name': self.display_name,
-            'url': self.url
+            'url': self.url,
+            'embed_url': self.embed_url
         }
         html = self.render_template('static/html/dm_edit.html', context)
         frag = Fragment(html)
@@ -93,14 +100,13 @@ class DailyMotionXBlock(XBlock):
         The saving handler.
         """
         self.display_name = data['display_name']
+        self.url = data['url']
         try:
-            video_id = data['url'].split('https://www.dailymotion.com/video/')[1].split('_')[0]
-            url = 'https://www.dailymotion.com/embed/video/'+video_id 
+            video_id = self.url.split('https://www.dailymotion.com/video/')[1].split('_')[0]
+            self.embed_url = 'https://www.dailymotion.com/embed/video/'+video_id 
         except:
-            video_id = data['url'].split('http://www.dailymotion.com/video/')[1].split('_')[0]
-            url = 'https://www.dailymotion.com/embed/video/'+video_id 
-        self.url = url
-        
+            video_id = self.url.split('http://www.dailymotion.com/video/')[1].split('_')[0]
+            self.embed_url = 'https://www.dailymotion.com/embed/video/'+video_id 
         return {
             'result': 'success',
         }
